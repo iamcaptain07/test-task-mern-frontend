@@ -17,16 +17,49 @@ export default async function handler(req, res) {
     // Forward the request to your EB backend
     const backendUrl = 'http://backend-env.eba-drmctxck.eu-north-1.elasticbeanstalk.com';
     
-    // Extract the path from the catch-all parameter
-    // In Vercel, req.query.path will be an array of path segments
-    const pathSegments = req.query.path || [];
-    const path = '/' + pathSegments.join('/');
+    // Extract the path from the catch-all route
+    // In Vercel, for /api/backend-proxy/api/auth/signin
+    // req.query.path will be ['api', 'auth', 'signin']
+    let path = '/';
     
-    // Handle query string
-    const queryString = req.url.includes('?') ? req.url.substring(req.url.indexOf('?')) : '';
+    // Method 1: Try to get from query parameter (catch-all route)
+    if (req.query && req.query.path) {
+      const pathSegments = Array.isArray(req.query.path) 
+        ? req.query.path 
+        : typeof req.query.path === 'string'
+        ? req.query.path.split('/').filter(Boolean)
+        : [];
+      
+      if (pathSegments.length > 0) {
+        path = '/' + pathSegments.join('/');
+      }
+    } 
+    // Method 2: Fallback - parse from req.url
+    else if (req.url) {
+      // Remove /api/backend-proxy prefix and extract the path
+      const urlPath = req.url.split('?')[0]; // Remove query string first
+      path = urlPath.replace(/^\/api\/backend-proxy/, '') || '/';
+      if (!path.startsWith('/')) {
+        path = '/' + path;
+      }
+    }
+    
+    // Handle query string - preserve original query params
+    const queryString = req.url && req.url.includes('?') 
+      ? '?' + req.url.split('?')[1] 
+      : '';
     
     // Build the full URL
     const url = `${backendUrl}${path}${queryString}`;
+    
+    // Log for debugging (remove in production if needed)
+    console.log('Proxy request:', {
+      method: req.method,
+      originalUrl: req.url,
+      query: req.query,
+      extractedPath: path,
+      targetUrl: url
+    });
 
     // Prepare headers for the backend request
     const headers = {};
