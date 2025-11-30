@@ -1,8 +1,0 @@
-{
-  "functions": {
-    "api/backend-proxy/[...path].js": {
-      "runtime": "nodejs18.x"
-    }
-  }
-}
-
