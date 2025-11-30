@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import api from '../lib/api'
 import { useAuth } from '../context/AuthContext'
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Button } from '../components/ui/button'
@@ -43,7 +43,7 @@ export default function Dashboard() {
   const fetchTasks = async () => {
     try {
       setLoading(true)
-      const res = await axios.get(`/api/tasks?page=${currentPage}&limit=10`)
+      const res = await api.get(`/api/tasks?page=${currentPage}&limit=10`)
       setTasks(res.data.tasks)
       setTotalPages(res.data.totalPages)
     } catch (error) {
@@ -60,7 +60,7 @@ export default function Dashboard() {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`/api/tasks/${taskToDelete}`)
+      await api.delete(`/api/tasks/${taskToDelete}`)
       setDeleteDialogOpen(false)
       setTaskToDelete(null)
       fetchTasks()

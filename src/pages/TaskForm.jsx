@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import axios from 'axios'
+import api from '../lib/api'
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card'
 import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
@@ -36,7 +36,7 @@ export default function TaskForm() {
 
   const fetchTask = async () => {
     try {
-      const res = await axios.get(`/api/tasks/${id}`)
+      const res = await api.get(`/api/tasks/${id}`)
       setFormData({
         title: res.data.title,
         description: res.data.description,
@@ -54,9 +54,9 @@ export default function TaskForm() {
 
     try {
       if (isEdit) {
-        await axios.put(`/api/tasks/${id}`, formData)
+        await api.put(`/api/tasks/${id}`, formData)
       } else {
-        await axios.post('/api/tasks', formData)
+        await api.post('/api/tasks', formData)
       }
       navigate('/dashboard')
     } catch (error) {

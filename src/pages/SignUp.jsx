@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import api from '../lib/api'
 import { useAuth } from '../context/AuthContext'
 import { useTheme } from '../context/ThemeContext'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../components/ui/card'
@@ -23,7 +23,7 @@ export default function SignUp() {
     setLoading(true)
 
     try {
-      const res = await axios.post('/api/auth/signup', formData)
+      const res = await api.post('/api/auth/signup', formData)
       login(res.data.token, res.data.user)
       navigate('/dashboard')
     } catch (err) {
