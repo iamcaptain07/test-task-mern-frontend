@@ -13,9 +13,8 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/api': {
-        target: 'http://backend-env.eba-drmctxck.eu-north-1.elasticbeanstalk.com',
-        changeOrigin: true,
-        secure: false
+        target: 'http://localhost:5000',
+        changeOrigin: true
       }
     }
   }
