@@ -1,8 +1,18 @@
 import axios from 'axios'
 
-// Configure axios with base URL from environment variable
+// Use Vercel proxy in production, direct backend URL in development
+const getBaseURL = () => {
+  // In development, use the backend URL directly or localhost
+  if (import.meta.env.DEV) {
+    return import.meta.env.VITE_API_URL || 'http://localhost:5000'
+  }
+  // In production (Vercel), use the proxy
+  return '/api/backend-proxy'
+}
+
+// Configure axios with base URL
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000',
+  baseURL: getBaseURL(),
   headers: {
     'Content-Type': 'application/json',
   },
