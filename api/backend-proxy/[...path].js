@@ -22,7 +22,7 @@ export default async function handler(req, res) {
     // req.query.path will be ['api', 'auth', 'signin']
     let path = '/';
     
-    // Method 1: Try to get from query parameter (catch-all route)
+    // Get path from catch-all route parameter
     if (req.query && req.query.path) {
       const pathSegments = Array.isArray(req.query.path) 
         ? req.query.path 
@@ -33,15 +33,14 @@ export default async function handler(req, res) {
       if (pathSegments.length > 0) {
         path = '/' + pathSegments.join('/');
       }
-    } 
-    // Method 2: Fallback - parse from req.url
-    else if (req.url) {
-      // Remove /api/backend-proxy prefix and extract the path
-      const urlPath = req.url.split('?')[0]; // Remove query string first
-      path = urlPath.replace(/^\/api\/backend-proxy/, '') || '/';
-      if (!path.startsWith('/')) {
-        path = '/' + path;
-      }
+    }
+    
+    // If no path from query, try to parse from URL
+    if (path === '/' && req.url) {
+      const urlPath = req.url.split('?')[0];
+      // Remove /api/backend-proxy prefix
+      const cleanPath = urlPath.replace(/^\/api\/backend-proxy\/?/, '');
+      path = cleanPath ? '/' + cleanPath : '/';
     }
     
     // Handle query string - preserve original query params
